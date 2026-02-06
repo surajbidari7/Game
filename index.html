@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surprise Valentine ❤️</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ff4d6d, #ff9a9e);
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+.container { padding: 40px 20px; position: relative; z-index: 2; }
+.hidden { display: none; }
+h1 { font-size: 2.2rem; }
+p { font-size: 1.2rem; }
+button {
+  font-size: 1.2rem;
+  padding: 14px 26px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background: #fff;
+  color: #ff4d6d;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Basket catcher fixed at bottom */
+#basket {
+  position: fixed;
+  bottom: 20px;
+  width: 120px;
+  height: 40px;
+  background: pink;
+  border-radius: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+/* Falling hearts */
+.fall-heart {
+  position: fixed;
+  font-size: 40px;
+  top: -50px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Floating hearts/flowers/balloons */
+.float { position: fixed; bottom: -100px; animation: floatUp linear infinite; pointer-events: none; }
+@keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120vh); opacity: 0; } }
+
+#noBtn { background: #ff2f55; color: #fff; position: absolute; }
+.love-box { background: rgba(255,255,255,0.15); padding: 20px; border-radius: 20px; margin-top: 20px; }
+.gifs img { width: 160px; margin: 10px; border-radius: 16px; }
+
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_5c5c7b9e7d.mp3" type="audio/mpeg">
+</audio>
+
+<!-- SCREEN 0: Intro -->
+<div class="container" id="screen0">
+  <h1>Hello Beautiful 🌸</h1>
+  <p>Good morning! 🌞</p>
+  <p>I have a surprise for you,<br>but to proceed, you need to win a game.<br>Are you ready?</p>
+  <button onclick="startGame()">Click to proceed 💖</button>
+</div>
+
+<!-- SCREEN 1: Catch the Pink Heart Game -->
+<div class="container hidden" id="screen1">
+  <h1>Catch the 💖 pink heart! 🎯</h1>
+  <p>Move your mouse to catch the pink heart in the basket.</p>
+  <div id="basket"></div>
+</div>
+
+<!-- SCREEN 2: Win Screen -->
+<div class="container hidden" id="screen2">
+  <h1>Wow, you won! 🎉💖</h1>
+  <p>Surprise is waiting for you…</p>
+  <button onclick="welcomeScreen()">Continue</button>
+</div>
+
+<!-- SCREEN 3: Welcome -->
+<div class="container hidden" id="screen3">
+  <h1>Welcome to Suraj's World 🌍❤️</h1>
+  <button onclick="valentineScreen()">Next</button>
+</div>
+
+<!-- SCREEN 4: Valentine Question -->
+<div class="container hidden" id="screen4">
+  <h1>Will you be my Valentine? 🌹❤️</h1>
+  <p>Please take your time to think. You can click NO as well👀  </p>
+  <div class="buttons">
+    <button onclick="sayYes()">Yes 💖</button>
+    <button id="noBtn">No 🙈</button>
+  </div>
+</div>
+
+<!-- SCREEN 5: YES -->
+<div class="container hidden" id="screen5">
+  <h1>I knew you would click YES 😘❤️</h1>
+  <div class="love-box">
+    <p>
+       तिमी मुस्कुराउँदा<br/>
+       मेरो दिन आफै राम्रो हुन्छ।<br/><br/>
+       सायद यही हो माया —,<br/>
+       साना कुरामा ठूलो खुशी 💕 ❤️
+    </p>
+  </div>
+  <div class="gifs">
+    <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"/>
+    <img src="https://media.giphy.com/media/gnXG2hODaCOru/giphy.gif"/>
+    <img src="https://media.giphy.com/media/l2QDM9Jnim1YVILXa/giphy.gif"/>
+  </div>
+  <h2>Happy Valentine’s Day 🌹❤️</h2>
+</div>
+
+<script>
+const music = document.getElementById('bgMusic');
+const noBtn = document.getElementById('noBtn');
+
+const screen0 = document.getElementById('screen0');
+const screen1 = document.getElementById('screen1');
+const screen2 = document.getElementById('screen2');
+const screen3 = document.getElementById('screen3');
+const screen4 = document.getElementById('screen4');
+const screen5 = document.getElementById('screen5');
+
+const basket = document.getElementById('basket');
+
+let gameInterval;
+
+function startGame() {
+  screen0.classList.add('hidden');
+  screen1.classList.remove('hidden');
+
+  // Move basket with mouse
+  document.addEventListener('mousemove', e => {
+    let x = e.clientX - basket.offsetWidth/2;
+    if(x < 0) x = 0;
+    if(x > window.innerWidth - basket.offsetWidth) x = window.innerWidth - basket.offsetWidth;
+    basket.style.left = x + 'px';
+  });
+
+  // Falling hearts appended to body
+  gameInterval = setInterval(() => {
+    const heart = document.createElement('div');
+    heart.classList.add('fall-heart');
+
+    const colors = ['💖','❤️','💛','💚','💙','🧡'];
+    const choice = colors[Math.floor(Math.random()*colors.length)];
+    heart.innerHTML = choice;
+    heart.dataset.color = choice;
+
+    heart.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+    heart.style.top = '-50px';
+    document.body.appendChild(heart);
+
+    const fallSpeed = 6 + Math.random()*4; // fast
+
+    const fall = setInterval(() => {
+      let currentTop = parseFloat(heart.style.top);
+      heart.style.top = currentTop + fallSpeed + 'px';
+
+      const heartRect = heart.getBoundingClientRect();
+      const basketRect = basket.getBoundingClientRect();
+
+      if (!(heartRect.right < basketRect.left || heartRect.left > basketRect.right ||
+            heartRect.bottom < basketRect.top || heartRect.top > basketRect.bottom)) {
+        if(heart.dataset.color === '💖'){
+          clearInterval(gameInterval);
+          document.querySelectorAll('.fall-heart').forEach(h => h.remove());
+          screen1.classList.add('hidden');
+          screen2.classList.remove('hidden');
+        } else {
+          heart.remove();
+        }
+      }
+
+      if(currentTop > window.innerHeight){
+        heart.remove();
+        clearInterval(fall);
+      }
+
+    }, 20);
+
+  }, 400); // new heart every 400ms
+}
+
+clearInterval(gameInterval);
+document.querySelectorAll('.fall-heart').forEach(h => h.remove());
+
+function welcomeScreen() {
+  screen2.classList.add('hidden');
+  screen3.classList.remove('hidden');
+}
+
+function valentineScreen() {
+  screen3.classList.add('hidden');
+  screen4.classList.remove('hidden');
+}
+
+function sayYes() {
+  screen4.classList.add('hidden');
+  screen5.classList.remove('hidden');
+  music.play();
+}
+
+// No button evasion
+function moveNo() {
+  noBtn.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+  noBtn.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+}
+noBtn.addEventListener('mouseover', moveNo);
+noBtn.addEventListener('click', moveNo);
+
+// Floating hearts/flowers/balloons
+function createFloat() {
+  const el = document.createElement('div');
+  el.classList.add('float');
+  const r = Math.random();
+  if (r < 0.4) el.innerHTML = '❤️';
+  else if (r < 0.7) el.innerHTML = '🌹';
+  else el.innerHTML = '🎈';
+  el.style.left = Math.random() * 100 + 'vw';
+  el.style.fontSize = (24 + Math.random()*20) + 'px';
+  el.style.animationDuration = (6 + Math.random()*6) + 's';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 12000);
+}
+setInterval(createFloat, 700);
+
+</script>
+</body>
+</html>
